@@ -32,7 +32,7 @@ class Net(nn.Module):
     
 def train(net, trainloader, epoch):
     criterion = nn.CrossEntropyLoss()
-    optimizer = torch.optim.SGD(net.parameters(),lr = 0.001, momentum=0.9, weight_decay=5e-4)
+    optimizer = torch.optim.SGD(net.parameters(),lr = 0.001, momentum=0.9)
     
     acc_list = []
     loss_list = []
