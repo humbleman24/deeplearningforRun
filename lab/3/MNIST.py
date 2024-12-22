@@ -34,18 +34,26 @@ def train(net, trainloader, epoch):
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(net.parameters(),lr = 0.001, momentum=0.9, weight_decay=5e-4)
     
+    acc_list = []
+    loss_list = []
     for i in range(epoch):
         print("Epoch {} Start training".format(i + 1))
         j = 0
+        epoch_loss = 0.0
         for image, label in trainloader:
             j += 1
             optimizer.zero_grad()
             output = net(image.to(DEVICE))
             loss = criterion(output, label.to(DEVICE))
+            epoch_loss += loss.item()
             loss.backward()
             optimizer.step()
             if j % 100 == 0:
                 print("Loss: {:.5f}".format(loss.item()))
+        loss_test, accuracy_test = test(net, testloader)
+        acc_list.append(accuracy_test)
+        loss_list.append(epoch_loss/len(trainloader.dataset))
+    return acc_list, loss_list
 
             
             
@@ -94,9 +102,14 @@ def load_model():
 if __name__ == '__main__':
     trainloader, testloader = load_data()
     net = load_model()
-    train(net, trainloader, 20)
+    acc_list, loss_list = train(net, trainloader, 20)
     loss, accuracy = test(net, testloader)
     print(f'Loss: {loss:.5f}, Accuracy: {accuracy:.3f}')
+    with open("training_log.txt", 'a') as f:
+        f.write(acc_list)
+        f.write('\n')
+        f.write(loss_list)
+        f.write('\n')
             
             
             
